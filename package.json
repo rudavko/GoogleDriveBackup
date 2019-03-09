@@ -1,0 +1,29 @@
+{
+  "name": "google-drive-backup",
+  "version": "0.0.1",
+  "description": "Uploads files to Google Cloud from specified folder at specified interval",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudavko/GoogleDriveBackup.git"
+  },
+  "author": "Andrii Rudavko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rudavko/GoogleDriveBackup/issues"
+  },
+  "homepage": "https://github.com/rudavko/GoogleDriveBackup#readme",
+  "devDependencies": {
+    "acorn": "^6.1.1",
+    "eslint": "^5.15.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "jest": "^24.3.1"
+  }
+}
