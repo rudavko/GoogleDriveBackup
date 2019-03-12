@@ -1,5 +1,6 @@
-exports.launch = ({ getConfig, getAuth, upload }) => {
-  const config = getConfig()
-  const auth = getAuth(config)
-  upload({ auth, config })
-}
+exports.launch = ({ getConfig, getAuth, upload }) =>
+  getConfig()
+    .then(config =>
+      getAuth(config)
+        .then(auth =>
+          upload({ auth, config })))
