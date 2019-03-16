@@ -14,14 +14,16 @@ describe('basics', () => {
           .toEqual(new Error('The config is empty'))
       )
   })
-  it('Returns an error if the auth has failed', () => {
+  it('Returns an error if the auth has failed', done => {
     expect.assertions(1)
     const getConfig = () => Promise.resolve()
     const getAuth = () => Promise.reject(new Error('The auth has failed'))
     main.launch({ getConfig, getAuth })
-      .catch(x =>
+      .catch(x => {
         expect(x)
-          .toEqual(new Error('The config is empty')))
+          .toEqual(new Error('The auth has failed'))
+        done()
+      })
   })
   it('Errors out if upload has failed', done => {
     const getConfig = () => Promise.resolve()
