@@ -1,4 +1,4 @@
-exports.auth = ({ config, GoogleOAuth2 } = {}) => {
+exports.auth = ({ config, GoogleOAuth2, rl } = {}) => {
   if (!config) return Promise.reject(new Error('No config specified'))
   if (!config.credentials) return Promise.reject(new Error('No credentials found in the config'))
   const oauth2Client = new GoogleOAuth2(
@@ -12,7 +12,12 @@ exports.auth = ({ config, GoogleOAuth2 } = {}) => {
       access_type: 'offline',
       scope: config.scope
     })
-    console.log(authUrl)
+    console.log('Go here', authUrl)
+    rl.question('Enter the code from the page here:')
+      .then(code => {
+        oauth2Client.getToken(code)
+        rl.close()
+      })
   }
   return Promise.resolve(oauth2Client)
 }

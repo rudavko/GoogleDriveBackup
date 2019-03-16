@@ -6,11 +6,15 @@ const oauth2Client = {
   getToken: jest.fn()
 }
 const SCOPE = ['https://www.googleapis.com/auth/drive.file']
-
+const AUTHCODE = 'fjwejfipwjepfjpwe'
 const GoogleOAuth2 = jest.fn(() => oauth2Client)
 const { auth } = require('../src/auth')
-const rl = {
-  question: jest.fn(),
+const rlGood = {
+  question: jest.fn(() => Promise.resolve(AUTHCODE)),
+  close: jest.fn()
+}
+const rlBad = {
+  question: jest.fn(() => Promise.reject()),
   close: jest.fn()
 }
 jest.spyOn(global.console, 'log')
@@ -38,7 +42,7 @@ describe('general tests', () => {
     }
   }
   it('creates an oauth2 client', done => {
-    auth({ config, GoogleOAuth2 })
+    auth({ config, GoogleOAuth2, rl: rlGood })
       .then(x => {
         expect(GoogleOAuth2)
           .toBeCalledWith(
@@ -61,23 +65,33 @@ describe('general tests', () => {
   })
   it('calls generate URL fine', done => {
     config.scope = SCOPE
-    auth({ config, GoogleOAuth2 })
+    auth({ config, GoogleOAuth2, rl: rlGood })
       .then(x => {
         expect(oauth2Client.generateAuthUrl).toBeCalledWith({
           access_type: 'offline',
           scope: SCOPE
         })
-        done()j
-      })
-  })
-  it('outputs url fine', done => {
-    auth({ config, GoogleOAuth2, rl })
-      .then(x => {
-        expect(console.log).toBeCalledWith(authUrl)
         done()
       })
   })
-  it('', () => {
-    expect().to
+  it('outputs url fine', done => {
+    auth({ config, GoogleOAuth2, rl: rlGood })
+      .then(x => {
+        expect(console.log)
+          .toBeCalledWith('Go here', authUrl)
+        done()
+      })
+  })
+  it('asks code from the user fine', done => {
+    const rl = rlGood
+    auth({ config, GoogleOAuth2, rl })
+      .then(x => {
+        expect(rl.question)
+          .toBeCalledWith('Enter the code from the page here:')
+        expect(oauth2Client.getToken)
+          .toBeCalledWith(AUTHCODE)
+        expect(rl.close).toBeCalled()
+        done()
+      })
   })
 })
