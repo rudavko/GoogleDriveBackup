@@ -1,9 +1,10 @@
 const authUrl = 'https://fjjjfjdkkjkfjdkj'
+const token = 'wfpjffejpwofewjpfwejpofewjop'
 const oauth2Client = {
   abc: 123,
   setCredentials: jest.fn(),
   generateAuthUrl: jest.fn(() => authUrl),
-  getToken: jest.fn()
+  getToken: jest.fn((code, callback) => callback(null, token))
 }
 const SCOPE = ['https://www.googleapis.com/auth/drive.file']
 const AUTHCODE = 'fjwejfipwjepfjpwe'
@@ -14,7 +15,7 @@ const rlGood = {
   close: jest.fn()
 }
 const rlBad = {
-  question: jest.fn(() => Promise.reject()),
+  question: jest.fn(() => Promise.reject(new Error())),
   close: jest.fn()
 }
 jest.spyOn(global.console, 'log')
@@ -53,19 +54,20 @@ describe('general tests', () => {
         done()
       })
   })
-  it('sets credentials if token is passed with confit', done => {
-    config.token = 'huiwefhwefhjwefowefophwefweiofp'
-    auth({ config, GoogleOAuth2 })
+  it('sets credentials if token is passed with config', done => {
+    const config2 = Object.assign({}, config)
+    config2.token = 'huiwefhwefhjwefowefophwefweiofp'
+    auth({ config: config2, GoogleOAuth2 })
       .then(x => {
-        expect(oauth2Client.setCredentials).toBeCalledWith(config.token)
+        expect(oauth2Client.setCredentials).toBeCalledWith(config2.token)
         expect(x).toEqual(oauth2Client)
-        delete config.token
         done()
       })
   })
   it('calls generate URL fine', done => {
-    config.scope = SCOPE
-    auth({ config, GoogleOAuth2, rl: rlGood })
+    const config3 = Object.assign({}, config)
+    config3.scope = SCOPE
+    auth({ config: config3, GoogleOAuth2, rl: rlGood })
       .then(x => {
         expect(oauth2Client.generateAuthUrl).toBeCalledWith({
           access_type: 'offline',
@@ -89,8 +91,10 @@ describe('general tests', () => {
         expect(rl.question)
           .toBeCalledWith('Enter the code from the page here:')
         expect(oauth2Client.getToken)
-          .toBeCalledWith(AUTHCODE)
+          .toBeCalled()
         expect(rl.close).toBeCalled()
+        expect(oauth2Client.setCredentials)
+          .toBeCalledWith(token)
         done()
       })
   })
