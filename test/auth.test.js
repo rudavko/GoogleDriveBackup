@@ -15,7 +15,7 @@ const rlGood = {
   close: jest.fn()
 }
 const rlBad = {
-  question: jest.fn(() => Promise.reject(new Error())),
+  question: jest.fn(() => Promise.reject(new Error('Could not ask for the code'))),
   close: jest.fn()
 }
 jest.spyOn(global.console, 'log')
@@ -95,6 +95,11 @@ describe('general tests', () => {
         expect(rl.close).toBeCalled()
         expect(oauth2Client.setCredentials)
           .toBeCalledWith(token)
+  it('handles getToken callback error fine', done => {
+    const rl = rlBad
+    auth({ config, GoogleOAuth2, rl })
+      .catch(er => {
+        expect(er).toEqual(new Error('Could not ask for the code'))
         done()
       })
   })

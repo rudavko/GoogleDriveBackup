@@ -22,12 +22,14 @@ exports.auth = ({ config, GoogleOAuth2, rl } = {}) => {
     })
     console.log('Go here', authUrl)
     rl.question('Enter the code from the page here:')
+    return rl.question('Enter the code from the page here:')
       .then(code => {
         rl.close()
         return getToken(oauth2Client, code)
       })
       .then(token =>
         oauth2Client.setCredentials(token))
+      .then(() => oauth2Client)
   }
   return Promise.resolve(oauth2Client)
 }
