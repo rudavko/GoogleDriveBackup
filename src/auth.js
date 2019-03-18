@@ -20,8 +20,7 @@ exports.auth = ({ config, GoogleOAuth2, rl } = {}) => {
       access_type: 'offline',
       scope: config.scope
     })
-    console.log('Go here', authUrl)
-    rl.question('Enter the code from the page here:')
+    console.log('Go here to authenticate', authUrl)
     return rl.question('Enter the code from the page here:')
       .then(code => {
         rl.close()

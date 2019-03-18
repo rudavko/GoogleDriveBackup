@@ -80,7 +80,7 @@ describe('general tests', () => {
     auth({ config, GoogleOAuth2, rl: rlGood })
       .then(x => {
         expect(console.log)
-          .toBeCalledWith('Go here', authUrl)
+          .toBeCalledWith('Go here to authenticate', AUTHURL)
         done()
       })
   })
