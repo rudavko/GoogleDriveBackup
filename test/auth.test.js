@@ -1,15 +1,14 @@
-const authUrl = 'https://fjjjfjdkkjkfjdkj'
-const token = 'wfpjffejpwofewjpfwejpofewjop'
+const AUTHURL = 'https://fjjjfjdkkjkfjdkj'
+const TOKEN = 'wfpjffejpwofewjpfwejpofewjop'
+const AUTHCODE = 'fjwejfipwjepfjpwe'
+const SCOPE = ['https://www.googleapis.com/auth/drive.file']
+
 const oauth2Client = {
   abc: 123,
   setCredentials: jest.fn(),
-  generateAuthUrl: jest.fn(() => authUrl),
-  getToken: jest.fn((code, callback) => callback(null, token))
+  generateAuthUrl: jest.fn(() => AUTHURL),
+  getToken: jest.fn((code, callback) => callback(null, TOKEN))
 }
-const SCOPE = ['https://www.googleapis.com/auth/drive.file']
-const AUTHCODE = 'fjwejfipwjepfjpwe'
-const GoogleOAuth2 = jest.fn(() => oauth2Client)
-const { auth } = require('../src/auth')
 const rlGood = {
   question: jest.fn(() => Promise.resolve(AUTHCODE)),
   close: jest.fn()
@@ -18,7 +17,10 @@ const rlBad = {
   question: jest.fn(() => Promise.reject(new Error('Could not ask for the code'))),
   close: jest.fn()
 }
+
 jest.spyOn(global.console, 'log')
+const GoogleOAuth2 = jest.fn(() => oauth2Client)
+const { auth } = require('../src/auth')
 
 describe('general tests', () => {
   it('checks config', done => {
@@ -94,7 +96,10 @@ describe('general tests', () => {
           .toBeCalled()
         expect(rl.close).toBeCalled()
         expect(oauth2Client.setCredentials)
-          .toBeCalledWith(token)
+          .toBeCalledWith(TOKEN)
+        done()
+      })
+  })
   it('handles getToken callback error fine', done => {
     const rl = rlBad
     auth({ config, GoogleOAuth2, rl })
