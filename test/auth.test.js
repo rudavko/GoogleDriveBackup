@@ -7,7 +7,7 @@ const oauth2Client = {
   abc: 123,
   setCredentials: jest.fn(),
   generateAuthUrl: jest.fn(() => AUTHURL),
-  getToken: jest.fn((code, callback) => callback(null, TOKEN))
+  getToken: jest.fn(() => Promise.resolve(TOKEN))
 }
 const rlGood = {
   question: jest.fn(() => Promise.resolve(AUTHCODE)),

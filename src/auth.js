@@ -1,11 +1,4 @@
-const getToken = (oauth2Client, code) =>
-  new Promise((resolve, reject) => {
-    const callback = (err, token) => {
-      if (err) reject(err)
-      resolve(token)
-    }
-    return oauth2Client.getToken(code, callback)
-  })
+
 exports.auth = ({ config, GoogleOAuth2, rl } = {}) => {
   if (!config) return Promise.reject(new Error('No config specified'))
   if (!config.credentials) return Promise.reject(new Error('No credentials found in the config'))
@@ -24,7 +17,7 @@ exports.auth = ({ config, GoogleOAuth2, rl } = {}) => {
     return rl.question('Enter the code from the page here:')
       .then(code => {
         rl.close()
-        return getToken(oauth2Client, code)
+        return oauth2Client.getToken(oauth2Client, code)
       })
       .then(token =>
         oauth2Client.setCredentials(token))
