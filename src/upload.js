@@ -16,9 +16,10 @@ exports.upload = ({ auth, config, files, fs, google, log } = {}) => {
         if (!uploading.has(file)) {
           uploading.add(file)
           log(file, 'started uploading')
-          return drive.files.create(
+          drive.files.create(
             { requestBody: {},
               media: { body: fs.createReadStream(file) } })
+            .then(data => log(file, 'finished uploading'))
         }
       } else {
         log(file, 'put in queue')

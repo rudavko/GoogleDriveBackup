@@ -43,7 +43,7 @@ describe('upload', () => {
     const log = jest.fn()
     return upload({ auth, files, config, fs, google, log })
       .then(() => {
-        expect(log.mock.calls)
+        expect(log.mock.calls.slice(0, 5))
           .toEqual([
             [files[0], 'started uploading'],
             [files[1], 'started uploading'],
@@ -57,11 +57,12 @@ describe('upload', () => {
       maxConcurrent: 1
     }
     const files = [
-      './cam1/1.mp4',
-      './cam1/2.mp4'
+      './cam1/6.mp4',
+      './cam1/7.mp4'
     ]
     const fs2 = { createReadStream: jest.fn(() => FSREADBODY) }
-    return upload({ auth, config, files, google, fs: fs2, log: jest.fn() })
+    const log = jest.fn()
+    return upload({ auth, config, files, google, fs: fs2, log })
       .then(() => {
         expect(fs2.createReadStream.mock.calls)
           .toEqual([[files[0]], [files[1]]])
@@ -69,6 +70,22 @@ describe('upload', () => {
           .toBeCalledWith({ version: 'v3', auth })
         expect(create)
           .toBeCalledWith({ requestBody: {}, media: { body: FSREADBODY } })
+      })
+  })
+  it('logs finished upload fine', done => {
+    const config = {
+      maxConcurent: 1
+    }
+    const files = ['./cam1/7.mp4', './cam1/8.mp4']
+    const log = jest.fn()
+    upload({ auth, config, files, google, fs, log })
+      .then(() => {
+        expect(log.mock.calls)
+          .toEqual([
+            ['./cam1/7.mp4', 'started uploading'],
+            ['./cam1/8.mp4', 'put in queue'],
+            ['./cam1/7.mp4', 'finished uploading']])
+        done()
       })
   })
 })
