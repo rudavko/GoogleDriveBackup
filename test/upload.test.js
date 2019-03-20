@@ -1,33 +1,35 @@
-const { upload } = require('../src/upload')
+const { upload, clearUploading } = require('../src/upload')
+
+beforeEach(() => { clearUploading() })
 
 const auth = {}
-jest.spyOn(global.console, 'log')
+const FSREADBODY = { abc: 123 }
+// jest.spyOn(global.console, 'log')
+const log = jest.fn()
+const fs = { createReadStream: jest.fn(() => FSREADBODY) }
+const create = jest.fn(() => Promise.resolve('good'))
+const google = { drive: jest.fn(() => ({ files: { create } })) }
 
 describe('upload', () => {
-  it('returns an error if no auth argument is passed', done => {
+  it('returns an error if no auth argument is passed', () =>
     upload()
       .catch(er => {
         expect(er).toEqual(new Error('The upload module did not receive the auth'))
-        done()
       })
-  })
-  it('returns an error if no confit is passed', done => {
+  )
+  it('returns an error if no confit is passed', () =>
     upload({ auth })
       .catch(err => {
         expect(err).toEqual(new Error('The upload module did not receive the config'))
-        done()
       })
-  })
-  it('outputs that the file started uploading', done => {
-    const file1 = './cam1/1.mp4'
-    upload({ auth, files: [file1], config: {} })
+  )
+  it('outputs that the file started uploading', () =>
+    upload({ auth, files: ['./cam1/1.mp4'], config: {}, fs, google, log })
       .then(() => {
-        expect(console.log).toBeCalledWith(file1, ' started uploading')
-        console.log.mock.calls = []
-        done()
+        expect(log).toBeCalledWith('./cam1/1.mp4', 'started uploading')
       })
-  })
-  it('outputs that first four files are uploading and last one is in the queue', done => {
+  )
+  it('outputs that first four files are uploading and last one is in the queue', () => {
     const config = {
       maxConcurrent: 4
     }
@@ -38,16 +40,35 @@ describe('upload', () => {
       './cam1/4.mp4',
       './cam1/5.mp4'
     ]
-    upload({ auth, files, config })
+    const log = jest.fn()
+    return upload({ auth, files, config, fs, google, log })
       .then(() => {
-        expect(console.log.mock.calls)
+        expect(log.mock.calls)
           .toEqual([
-            [files[0], ' started uploading'],
-            [files[1], ' started uploading'],
-            [files[2], ' started uploading'],
-            [files[3], ' started uploading'],
-            [files[4], ' put in queue']])
-        done()
+            [files[0], 'started uploading'],
+            [files[1], 'started uploading'],
+            [files[2], 'started uploading'],
+            [files[3], 'started uploading'],
+            [files[4], 'put in queue']])
+      })
+  })
+  it('starts file uploads fine', () => {
+    const config = {
+      maxConcurrent: 1
+    }
+    const files = [
+      './cam1/1.mp4',
+      './cam1/2.mp4'
+    ]
+    const fs2 = { createReadStream: jest.fn(() => FSREADBODY) }
+    return upload({ auth, config, files, google, fs: fs2, log: jest.fn() })
+      .then(() => {
+        expect(fs2.createReadStream.mock.calls)
+          .toEqual([[files[0]], [files[1]]])
+        expect(google.drive)
+          .toBeCalledWith({ version: 'v3', auth })
+        expect(create)
+          .toBeCalledWith({ requestBody: {}, media: { body: FSREADBODY } })
       })
   })
 })
