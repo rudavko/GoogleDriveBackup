@@ -27,7 +27,7 @@ describe('upload', () => {
         done()
       })
   })
-  it('outputs that', done => {
+  it('outputs that first four files are uploading and last one is in the queue', done => {
     const config = {
       maxConcurrent: 4
     }

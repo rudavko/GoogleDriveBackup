@@ -5,7 +5,7 @@ exports.upload = ({ auth, config, files } = {}) => {
 
   if (files && files.length > 0) {
     files.forEach(file => {
-      if (uploading.length < 4) {
+      if (uploading.length < (config.maxConcurent || 4)) {
         uploading.push(file)
         console.log(file, ' started uploading')
       } else {
