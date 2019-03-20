@@ -9,7 +9,7 @@ exports.upload = ({ auth, config, files } = {}) => {
         uploading.push(file)
         console.log(file, ' started uploading')
       } else {
-        console.log(file, ' put in que')
+        console.log(file, ' put in queue')
       }
     })
   }

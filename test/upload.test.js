@@ -46,7 +46,7 @@ describe('upload', () => {
             [files[1], ' started uploading'],
             [files[2], ' started uploading'],
             [files[3], ' started uploading'],
-            [files[4], ' put in que']])
+            [files[4], ' put in queue']])
         done()
       })
   })
