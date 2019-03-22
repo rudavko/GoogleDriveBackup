@@ -1,6 +1,7 @@
 const uploading = new Set([])
 const queue = new Set([])
 let drive
+
 const makeDrive = (google, auth) => {
   if (drive === undefined) {
     drive = google.drive({ version: 'v3', auth })
@@ -11,8 +12,8 @@ const addToUploadQueue = ({ max, file, drive, fs, log }) => {
   if (uploading.size < (max || 4)) {
     if (!uploading.has(file)) {
       uploading.add(file)
-      log(file, 'started uploading')
       if (queue.has(file)) queue.delete(file)
+      log(file, 'started uploading')
       return drive.files.create(
         { requestBody: {},
           media: { body: fs.createReadStream(file) } })
@@ -21,7 +22,10 @@ const addToUploadQueue = ({ max, file, drive, fs, log }) => {
           log(file, 'finished uploading')
         })
         .then(() => {
-          if (queue.size > 0) return addToUploadQueue({ max, file: [...queue].shift(), drive, fs, log })
+          if (queue.size > 0) {
+            const nextInQueue = [...queue].shift()
+            return addToUploadQueue({ max, drive, fs, log, file: nextInQueue })
+          }
         })
     }
   } else {
@@ -37,10 +41,9 @@ exports.upload = ({ auth, config, files, fs, google, log } = {}) => {
   const drive = makeDrive(google, auth)
   if (files && files.length > 0) {
     return Promise.all(files.map(file =>
-      addToUploadQueue({ file, drive, fs, max: config.maxConcurent, log })
+      addToUploadQueue({ file, drive, fs, log, max: config.maxConcurent })
     ))
   }
 }
 
 exports.clearUploading = () => uploading.clear()
-exports.clearQueue = () => queue.clear()

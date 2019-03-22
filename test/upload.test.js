@@ -14,13 +14,15 @@ describe('upload', () => {
   it('returns an error if no auth argument is passed', () =>
     upload()
       .catch(er => {
-        expect(er).toEqual(new Error('The upload module did not receive the auth'))
+        expect(er)
+          .toEqual(new Error('The upload module did not receive the auth'))
       })
   )
   it('returns an error if no confit is passed', () =>
     upload({ auth })
       .catch(err => {
-        expect(err).toEqual(new Error('The upload module did not receive the config'))
+        expect(err)
+          .toEqual(new Error('The upload module did not receive the config'))
       })
   )
   it('outputs that the file started uploading', () =>
@@ -29,7 +31,7 @@ describe('upload', () => {
         expect(log).toBeCalledWith('./cam1/1.mp4', 'started uploading')
       })
   )
-  it('outputs that first four files are uploading and last one is in the queue', () => {
+  it('outputs that first files are uploading and last one is in the queue', () => {
     const config = {
       maxConcurrent: 4
     }
