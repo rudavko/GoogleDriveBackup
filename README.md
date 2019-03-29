@@ -33,7 +33,7 @@ For config: a separate file `config.js`
 * `upload` takes an array of file paths, and returns a promise
 * `getAuth` handles all the auth
 * `getConfig` gets a list of folder paths from the config, plus API keys etc
-* `getFileList` returns an array of files paths an array of folder paths
+* `getFilesList` returns an array of files paths an array of folder paths
 * `sendMessage` takes a text and sends it to a set userId from config
 * `main` takes an array of folders from config and gets new files in those folders, starts uploading them and adds paths to a Set. Skips if the number of files being uploaded is above 4
 
