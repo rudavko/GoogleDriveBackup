@@ -1,7 +1,9 @@
 
-exports.auth = ({ config, GoogleOAuth2, rl } = {}) => {
+exports.getAuth = ({ config, GoogleOAuth2, rl } = {}) => {
   if (!config) return Promise.reject(new Error('No config specified'))
   if (!config.credentials) return Promise.reject(new Error('No credentials found in the config'))
+  if (!config.scope) return Promise.reject(new Error('No scope found in the config'))
+
   const oauth2Client = new GoogleOAuth2(
     config.credentials.client_id,
     config.credentials.client_secret,
@@ -16,7 +18,7 @@ exports.auth = ({ config, GoogleOAuth2, rl } = {}) => {
     console.log('Go here to authenticate', authUrl)
     return rl.question('Enter the code from the page here:')
       .then(code => {
-        rl.close()
+        rl.readline.close()
         return oauth2Client.getToken(oauth2Client, code)
       })
       .then(token =>
