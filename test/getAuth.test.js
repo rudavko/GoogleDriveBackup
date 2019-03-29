@@ -11,7 +11,10 @@ const oauth2Client = {
 }
 const rlGood = {
   question: jest.fn(() => Promise.resolve(AUTHCODE)),
-  close: jest.fn()
+  readline: {
+
+    close: jest.fn()
+  }
 }
 const rlBad = {
   question: jest.fn(() => Promise.reject(new Error('Could not ask for the code'))),
@@ -20,20 +23,27 @@ const rlBad = {
 
 jest.spyOn(global.console, 'log')
 const GoogleOAuth2 = jest.fn(() => oauth2Client)
-const { auth } = require('../src/auth')
+const { getAuth } = require('../src/modules/getAuth')
 
 describe('general tests', () => {
   it('checks config', done => {
-    auth()
+    getAuth()
       .catch(er => {
         expect(er).toEqual(new Error('No config specified'))
         done()
       })
   })
   it('returns error on no credentials', done => {
-    auth({ config: {} })
+    getAuth({ config: {} })
       .catch(er => {
         expect(er).toEqual(new Error('No credentials found in the config'))
+        done()
+      })
+  })
+  it('returns error on no scope', done => {
+    getAuth({ config: { credentials: {} } })
+      .catch(er => {
+        expect(er).toEqual(new Error('No scope found in the config'))
         done()
       })
   })
@@ -42,10 +52,11 @@ describe('general tests', () => {
       client_id: 123,
       client_secret: 'fdhslaf',
       redirect_uris: ['zzrfdsjakl']
-    }
+    },
+    scope: 'ff'
   }
   it('creates an oauth2 client', done => {
-    auth({ config, GoogleOAuth2, rl: rlGood })
+    getAuth({ config, GoogleOAuth2, rl: rlGood })
       .then(x => {
         expect(GoogleOAuth2)
           .toBeCalledWith(
@@ -59,7 +70,7 @@ describe('general tests', () => {
   it('sets credentials if token is passed with config', done => {
     const config2 = Object.assign({}, config)
     config2.token = 'huiwefhwefhjwefowefophwefweiofp'
-    auth({ config: config2, GoogleOAuth2 })
+    getAuth({ config: config2, GoogleOAuth2 })
       .then(x => {
         expect(oauth2Client.setCredentials).toBeCalledWith(config2.token)
         expect(x).toEqual(oauth2Client)
@@ -69,7 +80,7 @@ describe('general tests', () => {
   it('calls generate URL fine', done => {
     const config3 = Object.assign({}, config)
     config3.scope = SCOPE
-    auth({ config: config3, GoogleOAuth2, rl: rlGood })
+    getAuth({ config: config3, GoogleOAuth2, rl: rlGood })
       .then(x => {
         expect(oauth2Client.generateAuthUrl).toBeCalledWith({
           access_type: 'offline',
@@ -79,7 +90,7 @@ describe('general tests', () => {
       })
   })
   it('outputs url fine', done => {
-    auth({ config, GoogleOAuth2, rl: rlGood })
+    getAuth({ config, GoogleOAuth2, rl: rlGood })
       .then(x => {
         expect(console.log)
           .toBeCalledWith('Go here to authenticate', AUTHURL)
@@ -88,13 +99,13 @@ describe('general tests', () => {
   })
   it('asks code from the user fine', done => {
     const rl = rlGood
-    auth({ config, GoogleOAuth2, rl })
+    getAuth({ config, GoogleOAuth2, rl })
       .then(x => {
         expect(rl.question)
           .toBeCalledWith('Enter the code from the page here:')
         expect(oauth2Client.getToken)
           .toBeCalled()
-        expect(rl.close).toBeCalled()
+        expect(rl.readline.close).toBeCalled()
         expect(oauth2Client.setCredentials)
           .toBeCalledWith(TOKEN)
         done()
@@ -102,7 +113,7 @@ describe('general tests', () => {
   })
   it('handles getToken callback error fine', done => {
     const rl = rlBad
-    auth({ config, GoogleOAuth2, rl })
+    getAuth({ config, GoogleOAuth2, rl })
       .catch(er => {
         expect(er).toEqual(new Error('Could not ask for the code'))
         done()
