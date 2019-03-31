@@ -7,10 +7,10 @@ const GoogleOAuth2 = google.auth.OAuth2
 exports.launch = ({ loadConfig, getAuth, upload, getFilesList }) =>
   loadConfig()
     .then(config =>
-      getAuth({ config, GoogleOAuth2, rl })
-        .then(auth =>
-          getFilesList({ fs, config, flatten })
-            .then(files =>
+      getFilesList({ fs, config, flatten })
+        .then(files =>
+          getAuth({ config, GoogleOAuth2, rl })
+            .then(auth =>
               upload({
                 fs,
                 auth,
