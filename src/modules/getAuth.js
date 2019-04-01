@@ -1,4 +1,9 @@
+const fs = require('fs')
 
+const saveToken = token => {
+  const tokenText = JSON.stringify({ refresh_token: token.tokens.refresh_token })
+  fs.writeFileSync('token.json', tokenText)
+}
 exports.getAuth = ({ config, GoogleOAuth2, rl } = {}) => {
   if (!config) return Promise.reject(new Error('No config specified'))
   if (!config.credentials) return Promise.reject(new Error('No credentials found in the config'))
@@ -19,10 +24,10 @@ exports.getAuth = ({ config, GoogleOAuth2, rl } = {}) => {
     return rl.question('Enter the code from the page here:')
       .then(code => {
         rl.readline.close()
-        return oauth2Client.getToken(oauth2Client, code)
         return oauth2Client.getToken(code)
       })
       .then(token => {
+        saveToken(token)
         oauth2Client.setCredentials({ refresh_token: token.tokens.refresh_token })
       })
       .then(() => oauth2Client)
