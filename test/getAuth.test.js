@@ -1,11 +1,11 @@
 const AUTHURL = 'https://fjjjfjdkkjkfjdkj'
-const TOKEN = 'wfpjffejpwofewjpfwejpofewjop'
+const TOKEN = { tokens: { refresh_token: 'fdsf' } }
 const AUTHCODE = 'fjwejfipwjepfjpwe'
 const SCOPE = ['https://www.googleapis.com/auth/drive.file']
 
 const oauth2Client = {
   abc: 123,
-  setCredentials: jest.fn(),
+  setCredentials: jest.fn(() => Promise.resolve(TOKEN)),
   generateAuthUrl: jest.fn(() => AUTHURL),
   getToken: jest.fn(() => Promise.resolve(TOKEN))
 }
@@ -72,7 +72,7 @@ describe('general tests', () => {
     config2.token = 'huiwefhwefhjwefowefophwefweiofp'
     getAuth({ config: config2, GoogleOAuth2 })
       .then(x => {
-        expect(oauth2Client.setCredentials).toBeCalledWith(config2.token)
+        expect(oauth2Client.setCredentials).toBeCalledWith({ refresh_token: config2.token })
         expect(x).toEqual(oauth2Client)
         done()
       })
@@ -107,7 +107,7 @@ describe('general tests', () => {
           .toBeCalled()
         expect(rl.readline.close).toBeCalled()
         expect(oauth2Client.setCredentials)
-          .toBeCalledWith(TOKEN)
+          .toBeCalledWith({ refresh_token: TOKEN.tokens.refresh_token })
         done()
       })
   })

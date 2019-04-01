@@ -9,7 +9,7 @@ exports.getAuth = ({ config, GoogleOAuth2, rl } = {}) => {
     config.credentials.client_secret,
     config.credentials.redirect_uris[0])
   if (config.token) {
-    oauth2Client.setCredentials(config.token)
+    oauth2Client.setCredentials({ refresh_token: config.token })
   } else {
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline',
@@ -20,9 +20,11 @@ exports.getAuth = ({ config, GoogleOAuth2, rl } = {}) => {
       .then(code => {
         rl.readline.close()
         return oauth2Client.getToken(oauth2Client, code)
+        return oauth2Client.getToken(code)
       })
-      .then(token =>
-        oauth2Client.setCredentials(token))
+      .then(token => {
+        oauth2Client.setCredentials({ refresh_token: token.tokens.refresh_token })
+      })
       .then(() => oauth2Client)
   }
   return Promise.resolve(oauth2Client)
