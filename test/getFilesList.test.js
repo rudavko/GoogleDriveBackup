@@ -21,14 +21,14 @@ describe('Gets a list of all files in all foldels from config',
           if (path === './cam1') return ['vid1.mp4', 'vid2.mp4']
           if (path === './cam2') return ['vid3.mp4', 'vid4.mp4']
         }),
-        existsSync: jest.fn()
+        existsSync: jest.fn(() => true)
       }
       getFilesList({ fs, config, flatten })
         .then(files => {
           expect(fs.existsSync.mock.calls)
             .toEqual([['./cam1'], ['./cam2']])
           expect(files)
-            .toEqual(['vid1.mp4', 'vid2.mp4', 'vid3.mp4', 'vid4.mp4'])
+            .toEqual(['./cam1/vid1.mp4', './cam1/vid2.mp4', './cam2/vid3.mp4', './cam2/vid4.mp4'])
           done()
         })
     })
