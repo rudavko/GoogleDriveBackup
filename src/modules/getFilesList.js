@@ -5,7 +5,7 @@ exports.getFilesList = ({ fs, config, flatten }) => {
   }
 
   return Promise.all(config.folders.map(folder => {
-    if (!fs.existsSync(folder)) {
+    if (fs.existsSync(folder)) {
       return fs.readdirSync(folder)
         .map(file => `${folder}/${file}`)
     }
