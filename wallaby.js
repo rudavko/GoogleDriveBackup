@@ -1,6 +1,7 @@
 module.exports = () => ({
   files: [
-    'src/**/*.js'
+    'src/**/*.js',
+    './config.js'
   ],
   tests: [
     'test/**/*test.js'
