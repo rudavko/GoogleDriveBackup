@@ -1,3 +1,5 @@
+const path = require('path')
+
 const uploading = new Set([])
 const queue = new Set([])
 let drive
@@ -8,6 +10,7 @@ const makeDrive = (google, auth) => {
   }
   return drive
 }
+
 const addToUploadQueue = ({ max, file, drive, fs, log }) => {
   if (uploading.size < (max || 4)) {
     if (!uploading.has(file)) {
@@ -15,8 +18,14 @@ const addToUploadQueue = ({ max, file, drive, fs, log }) => {
       if (queue.has(file)) queue.delete(file)
       log(file, 'started uploading')
       return drive.files.create(
-        { requestBody: {},
-          media: { body: fs.createReadStream(file) } })
+        {
+          requestBody: {
+            name: path.basename(file)
+          },
+          media: {
+            body: fs.createReadStream(file)
+          }
+        })
         .then(() => {
           uploading.delete(file)
           log(file, 'finished uploading')

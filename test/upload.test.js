@@ -1,4 +1,4 @@
-const { upload, clearUploading } = require('../src/upload')
+const { upload, clearUploading } = require('../src/modules/upload')
 
 beforeEach(() => { clearUploading() })
 
@@ -18,7 +18,7 @@ describe('upload', () => {
           .toEqual(new Error('The upload module did not receive the auth'))
       })
   )
-  it('returns an error if no confit is passed', () =>
+  it('returns an error if no config is passed', () =>
     upload({ auth })
       .catch(err => {
         expect(err)
@@ -71,7 +71,7 @@ describe('upload', () => {
         expect(google.drive)
           .toBeCalledWith({ version: 'v3', auth })
         expect(create)
-          .toBeCalledWith({ requestBody: {}, media: { body: FSREADBODY } })
+          .toBeCalledWith({ requestBody: { name: '7.mp4' }, media: { body: FSREADBODY } })
       })
   })
   it('logs finished upload fine', done => {
