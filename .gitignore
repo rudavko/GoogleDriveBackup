@@ -76,3 +76,5 @@ typings/
 .fusebox/
 
 credentials*.json
+token.json
+.vscode/*
