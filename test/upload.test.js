@@ -107,9 +107,9 @@ describe('upload', () => {
           .toEqual([
             ['./cam1/7.mp4', 'started uploading'],
             ['./cam1/8.mp4', 'put in queue'],
-            ['./cam1/7.mp4', 'finished uploading'],
+            ['./cam1/7.mp4', 'finished uploading and was deleted'],
             ['./cam1/8.mp4', 'started uploading'],
-            ['./cam1/8.mp4', 'finished uploading']
+            ['./cam1/8.mp4', 'finished uploading and was deleted']
           ])
         expect(fs.unlinkSync.mock.calls).toEqual([[files[0]], [files[1]]])
         done()

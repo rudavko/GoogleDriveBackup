@@ -28,8 +28,12 @@ const addToUploadQueue = ({ max, deleteAfter, file, drive, fs, log }) => {
         })
         .then(() => {
           uploading.delete(file)
-          if (deleteAfter) fs.unlinkSync(file)
-          log(file, 'finished uploading')
+          if (deleteAfter) {
+            fs.unlinkSync(file)
+            log(file, 'finished uploading and was deleted')
+          } else {
+            log(file, 'finished uploading')
+          }
         })
         .then(() => {
           if (queue.size > 0) {
