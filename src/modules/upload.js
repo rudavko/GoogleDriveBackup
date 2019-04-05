@@ -39,6 +39,12 @@ const addToUploadQueue = ({ max, deleteAfter, file, drive, fs, log }) => {
           if (queue.size > 0) {
             const nextInQueue = [...queue].shift()
             return addToUploadQueue({ max, deleteAfter, drive, fs, log, file: nextInQueue })
+          } else {
+            log('All downloads finished. Exiting in 3 seconds')
+            return new Promise((resolve, reject) => setTimeout(() => {
+              resolve(true)
+              process.exit()
+            }, 3000))
           }
         })
     }

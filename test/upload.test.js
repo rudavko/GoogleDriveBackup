@@ -4,7 +4,7 @@ beforeEach(() => { clearUploading() })
 
 const auth = {}
 const FSREADBODY = { abc: 123 }
-// jest.spyOn(global.console, 'log')
+jest.spyOn(global.process, 'exit')
 const log = jest.fn()
 const fs = { createReadStream: jest.fn(() => FSREADBODY) }
 const create = jest.fn(() => Promise.resolve('good'))
@@ -88,7 +88,8 @@ describe('upload', () => {
             ['./cam1/8.mp4', 'put in queue'],
             ['./cam1/7.mp4', 'finished uploading'],
             ['./cam1/8.mp4', 'started uploading'],
-            ['./cam1/8.mp4', 'finished uploading']
+            ['./cam1/8.mp4', 'finished uploading'],
+            ['All downloads finished. Exiting in 3 seconds']
           ])
         done()
       })
@@ -109,9 +110,11 @@ describe('upload', () => {
             ['./cam1/8.mp4', 'put in queue'],
             ['./cam1/7.mp4', 'finished uploading and was deleted'],
             ['./cam1/8.mp4', 'started uploading'],
-            ['./cam1/8.mp4', 'finished uploading and was deleted']
+            ['./cam1/8.mp4', 'finished uploading and was deleted'],
+            ['All downloads finished. Exiting in 3 seconds']
           ])
         expect(fs.unlinkSync.mock.calls).toEqual([[files[0]], [files[1]]])
+        expect(process.exit).toBeCalled()
         done()
       })
   })
