@@ -11,7 +11,7 @@ const makeDrive = (google, auth) => {
   return drive
 }
 
-const addToUploadQueue = ({ max, file, drive, fs, log }) => {
+const addToUploadQueue = ({ max, deleteAfter, file, drive, fs, log }) => {
   if (uploading.size < (max || 4)) {
     if (!uploading.has(file)) {
       uploading.add(file)
@@ -28,12 +28,13 @@ const addToUploadQueue = ({ max, file, drive, fs, log }) => {
         })
         .then(() => {
           uploading.delete(file)
+          if (deleteAfter) fs.unlinkSync(file)
           log(file, 'finished uploading')
         })
         .then(() => {
           if (queue.size > 0) {
             const nextInQueue = [...queue].shift()
-            return addToUploadQueue({ max, drive, fs, log, file: nextInQueue })
+            return addToUploadQueue({ max, deleteAfter, drive, fs, log, file: nextInQueue })
           }
         })
     }
@@ -50,7 +51,7 @@ exports.upload = ({ auth, config, files, fs, google, log } = {}) => {
   const drive = makeDrive(google, auth)
   if (files && files.length > 0) {
     return Promise.all(files.map(file =>
-      addToUploadQueue({ file, drive, fs, log, max: config.maxConcurent })
+      addToUploadQueue({ file, drive, fs, log, max: config.maxConcurent, deleteAfter: config.deleteAfter })
     ))
   }
 }

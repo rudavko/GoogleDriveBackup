@@ -93,4 +93,26 @@ describe('upload', () => {
         done()
       })
   })
+  it('deletes after the upload', done => {
+    const config = {
+      maxConcurent: 1,
+      deleteAfter: true
+    }
+    fs.unlinkSync = jest.fn()
+    const files = ['./cam1/7.mp4', './cam1/8.mp4']
+    const log = jest.fn()
+    upload({ auth, config, files, google, fs, log })
+      .then(() => {
+        expect(log.mock.calls)
+          .toEqual([
+            ['./cam1/7.mp4', 'started uploading'],
+            ['./cam1/8.mp4', 'put in queue'],
+            ['./cam1/7.mp4', 'finished uploading'],
+            ['./cam1/8.mp4', 'started uploading'],
+            ['./cam1/8.mp4', 'finished uploading']
+          ])
+        expect(fs.unlinkSync.mock.calls).toEqual([[files[0]], [files[1]]])
+        done()
+      })
+  })
 })
