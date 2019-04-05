@@ -2,6 +2,7 @@ const loadConfig = require('../src/modules/loadConfig').loadConfigClean
 const CREDENTIALS_PATH = './credentials.json'
 const TOKEN_PATH = './token.json'
 const SCOPE = 'https://www.googleapis.com/auth/drive.file'
+jest.spyOn(global.console, 'log')
 describe('loads config fine', () => {
   const config = {}
   it('returns error if credentials do not exist', done => {
@@ -15,7 +16,7 @@ describe('loads config fine', () => {
         done()
       })
   })
-  it('returns error if creentials are unparsable', done => {
+  it('returns error if credentials are unparsable', done => {
     const fs = {
       existsSync: jest.fn(() => true),
       readFileSync: jest.fn()
@@ -54,11 +55,12 @@ describe('loads config fine', () => {
       })
     }
     loadConfig({ fs, config })
-      .catch(er => {
+      .then(er => {
         expect(fs.existsSync).toBeCalledWith(CREDENTIALS_PATH)
         expect(fs.existsSync).toBeCalledWith(TOKEN_PATH)
         expect(fs.readFileSync).toBeCalledWith(CREDENTIALS_PATH)
-        expect(er).toEqual(new Error('Could not parse "token.json" file'))
+        expect(console.log)
+          .toBeCalledWith('Could not parse "token.json" file')
         done()
       })
   })

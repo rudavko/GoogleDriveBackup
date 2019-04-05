@@ -21,7 +21,7 @@ const loadConfig = ({ fs, config }) => {
     try {
       config.token = JSON.parse(tokenString).refresh_token
     } catch (e) {
-      return Promise.reject(new Error('Could not parse "token.json" file'))
+      console.log('Could not parse "token.json" file')
     }
   }
   config.scope = SCOPE
