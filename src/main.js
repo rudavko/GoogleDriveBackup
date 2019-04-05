@@ -9,7 +9,7 @@ exports.launch = ({ loadConfig, getAuth, upload, getFilesList }) =>
     .then(config =>
       getFilesList({ fs, config, flatten })
         .then(files =>
-          getAuth({ config, GoogleOAuth2, rl })
+          getAuth({ fs, config, GoogleOAuth2, rl })
             .then(auth =>
               upload({
                 fs,

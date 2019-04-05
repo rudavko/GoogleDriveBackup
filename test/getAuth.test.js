@@ -9,7 +9,7 @@ const oauth2Client = {
   generateAuthUrl: jest.fn(() => AUTHURL),
   getToken: jest.fn(() => Promise.resolve(TOKEN))
 }
-const rlGood = {
+const rl = {
   question: jest.fn(() => Promise.resolve(AUTHCODE)),
   readline: {
 
@@ -19,6 +19,9 @@ const rlGood = {
 const rlBad = {
   question: jest.fn(() => Promise.reject(new Error('Could not ask for the code'))),
   close: jest.fn()
+}
+const fs = {
+  writeFileSync: jest.fn()
 }
 
 jest.spyOn(global.console, 'log')
@@ -56,7 +59,7 @@ describe('general tests', () => {
     scope: 'ff'
   }
   it('creates an oauth2 client', done => {
-    getAuth({ config, GoogleOAuth2, rl: rlGood })
+    getAuth({ config, GoogleOAuth2, rl, fs })
       .then(x => {
         expect(GoogleOAuth2)
           .toBeCalledWith(
@@ -80,7 +83,7 @@ describe('general tests', () => {
   it('calls generate URL fine', done => {
     const config3 = Object.assign({}, config)
     config3.scope = SCOPE
-    getAuth({ config: config3, GoogleOAuth2, rl: rlGood })
+    getAuth({ config: config3, GoogleOAuth2, rl, fs })
       .then(x => {
         expect(oauth2Client.generateAuthUrl).toBeCalledWith({
           access_type: 'offline',
@@ -90,7 +93,7 @@ describe('general tests', () => {
       })
   })
   it('outputs url fine', done => {
-    getAuth({ config, GoogleOAuth2, rl: rlGood })
+    getAuth({ config, GoogleOAuth2, rl, fs })
       .then(x => {
         expect(console.log)
           .toBeCalledWith('Go here to authenticate', AUTHURL)
@@ -98,8 +101,7 @@ describe('general tests', () => {
       })
   })
   it('asks code from the user fine', done => {
-    const rl = rlGood
-    getAuth({ config, GoogleOAuth2, rl })
+    getAuth({ config, GoogleOAuth2, rl, fs })
       .then(x => {
         expect(rl.question)
           .toBeCalledWith('Enter the code from the page here:')
@@ -108,6 +110,7 @@ describe('general tests', () => {
         expect(rl.readline.close).toBeCalled()
         expect(oauth2Client.setCredentials)
           .toBeCalledWith({ refresh_token: TOKEN.tokens.refresh_token })
+        expect(fs.writeFileSync).toBeCalledWith('token.json', '{"refresh_token":"fdsf"}')
         done()
       })
   })
