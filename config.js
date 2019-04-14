@@ -1,6 +1,7 @@
 exports.config = {
   folders: [
-    'cam1'
+    // 'folder1'
+    // 'folder2'
   ],
-  deleteAfter: true
+  deleteAfter: false
 }
