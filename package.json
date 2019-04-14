@@ -1,6 +1,6 @@
 {
   "name": "google-drive-backup",
-  "version": "0.0.1",
+  "version": "1.0.0-rc1",
   "description": "Uploads files to Google Cloud from specified folder at specified interval",
   "main": "app.js",
   "scripts": {
