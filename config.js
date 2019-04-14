@@ -1,7 +1,10 @@
 exports.config = {
   folders: [
-    // 'folder1'
-    // 'folder2'
+    /*
+    '/folder/on/a/mac',
+     'c:\\folder\\on\\windows'
+     // use double slashes on windows
+     */
   ],
   deleteAfter: false
 }
