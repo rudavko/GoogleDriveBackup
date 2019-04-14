@@ -4,7 +4,7 @@ Uploads files to Google Drive for backup
 
 ## Getting started
 1. Download the code from GitHub
-2. Download your credentials from (https://console.cloud.google.com/apis/credentials)[https://console.cloud.google.com/apis/credentials] and put them into `credentials.json` file
+2. Download your credentials from https://console.cloud.google.com/apis/credentials and put them into `credentials.json` file
 3. Add some folder paths in the `config.js` (relative or absolute)
 4. `npm install` in the downloaded folder
 5. `node app.js`
