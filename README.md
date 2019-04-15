@@ -1,4 +1,4 @@
-# CloudBackup v1.0-rc1 [![Build Status](https://travis-ci.com/rudavko/GoogleDriveBackup.svg?branch=master)](https://travis-ci.com/rudavko/GoogleDriveBackup)
+# CloudBackup v1.0-rc1 [![Build Status](https://travis-ci.com/rudavko/GoogleDriveBackup.svg?branch=master)](https://travis-ci.com/rudavko/GoogleDriveBackup)[![CodeFactor](https://www.codefactor.io/repository/github/rudavko/googledrivebackup/badge)](https://www.codefactor.io/repository/github/rudavko/googledrivebackup)
 Uploads files to Google Drive for backup
 
 ## Getting started
