@@ -3,7 +3,7 @@ Uploads files to Google Drive for backup
 
 ## Getting started
 1.  Download the code from GitHub
-2.  Download your credentials from https://console.cloud.google.com/apis/credentials and put them into `credentials.json` file
+2.  Download your credentials from <https://console.cloud.google.com/apis/credentials> and put them into `credentials.json` file
 3.  Add some folder paths in the `config.js` (relative or absolute)
 4.  `$ npm install` 
 5.  `$ node app.js`
@@ -32,4 +32,3 @@ If the file is uploaded, and the 'deleteAfter' is set it is deleted.
 For added security the minimal oauth scope is used (the one that can access only the files that were created using the app)
 To run the script at sertain intervals an external tool can be used like `cron` or  `pm2`.
 Config: a separate file `config.js` and `credentials.json` with Google credentials.
-
