@@ -84,7 +84,7 @@ describe('general tests', () => {
     const config3 = Object.assign({}, config)
     config3.scope = SCOPE
     getAuth({ config: config3, GoogleOAuth2, rl, fs })
-      .then(x => {
+      .then(() => {
         expect(oauth2Client.generateAuthUrl).toBeCalledWith({
           access_type: 'offline',
           scope: SCOPE
@@ -94,7 +94,7 @@ describe('general tests', () => {
   })
   it('outputs url fine', done => {
     getAuth({ config, GoogleOAuth2, rl, fs })
-      .then(x => {
+      .then(() => {
         expect(console.log)
           .toBeCalledWith('Go here to authenticate', AUTHURL)
         done()
@@ -102,7 +102,7 @@ describe('general tests', () => {
   })
   it('asks code from the user fine', done => {
     getAuth({ config, GoogleOAuth2, rl, fs })
-      .then(x => {
+      .then(() => {
         expect(rl.question)
           .toBeCalledWith('Enter the code from the page here:')
         expect(oauth2Client.getToken)
