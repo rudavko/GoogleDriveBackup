@@ -2,29 +2,29 @@
 Uploads files to Google Drive for backup
 
 ## Getting started
-1. Download the code from GitHub
-2. Download your credentials from https://console.cloud.google.com/apis/credentials and put them into `credentials.json` file
-3. Add some folder paths in the `config.js` (relative or absolute)
-4. `$ npm install` 
-5. `$ node app.js`
-6. Authenticate with your Google account via the instaructinons in the command promt
-7. Sitback, relax and wathc as the script uploads the files into the cloud
+1.  Download the code from GitHub
+2.  Download your credentials from https://console.cloud.google.com/apis/credentials and put them into `credentials.json` file
+3.  Add some folder paths in the `config.js` (relative or absolute)
+4.  `$ npm install` 
+5.  `$ node app.js`
+6.  Authenticate with your Google account via the instaructinons in the command promt
+7.  Sitback, relax and wathc as the script uploads the files into the cloud
 
 ### Features
-* scans folders for files and uploads the files (no hierarchy yet) 
-* can delete the files after succesfull upload
-* after the files have been uploaded the script stops and exits
-* (not yet) notifies via telegram of any errors
+*   scans folders for files and uploads the files (no hierarchy yet) 
+*   can delete the files after succesfull upload
+*   after the files have been uploaded the script stops and exits
+*   (not yet) notifies via telegram of any errors
 
 ## Architecture
 Language Javascript for Node
 ### Config
-* credentials.json - Google API credentials
-* config.js - An array of folders path, whether to delete files after upload
+*   credentials.json - Google API credentials
+*   config.js - An array of folders path, whether to delete files after upload
 
 ### Components
-* `googleapis` for Google Drive access
-* `fs` for file system access 
+*   `googleapis` for Google Drive access
+*   `fs` for file system access 
 
 ### Structure
 Basically it is a script that runs, scans the folders and performs an upload of found files to Google Drive.
