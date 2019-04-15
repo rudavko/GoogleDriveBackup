@@ -18,4 +18,4 @@ exports.launch = ({ loadConfig, getAuth, upload, getFilesList }) =>
                 google,
                 config,
                 log: console.log }))))
-    .catch(er => console.log(er))
+    .catch(er => console.log(er) && process.exit(1))
