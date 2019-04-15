@@ -118,4 +118,18 @@ describe('upload', () => {
         done()
       })
   })
+  it('Rejects fine on unlink error', done => {
+    const config = {
+      maxConcurent: 1,
+      deleteAfter: true
+    }
+    fs.unlinkSync = jest.fn(() => { throw new Error('Error unlinking the file') })
+    const files = ['./cam1/7.mp4', './cam1/8.mp4']
+    const log = jest.fn()
+    upload({ auth, config, files, google, fs, log })
+      .catch(er => {
+        expect(er).toEqual(new Error('Error unlinking the file'))
+        done()
+      })
+  })
 })
