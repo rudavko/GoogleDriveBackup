@@ -1,4 +1,4 @@
-# CloudBackup v1.0-rc1
+# CloudBackup v1.0-rc1 [![Build Status](https://travis-ci.com/rudavko/GoogleDriveBackup.svg?branch=master)](https://travis-ci.com/rudavko/GoogleDriveBackup)
 Uploads files to Google Drive for backup
 
 ## Getting started
