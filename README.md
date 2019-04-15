@@ -1,5 +1,4 @@
 # CloudBackup v1.0-rc1
-## What it does:
 Uploads files to Google Drive for backup
 
 ## Getting started
