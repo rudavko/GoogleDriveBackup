@@ -4,12 +4,15 @@ beforeEach(() => { clearUploading() })
 
 const auth = {}
 const FSREADBODY = { abc: 123 }
-jest.spyOn(global.process, 'exit')
+global.process.exit = jest.fn()
 const log = jest.fn()
 const fs = { createReadStream: jest.fn(() => FSREADBODY) }
 const create = jest.fn(() => Promise.resolve('good'))
 const google = { drive: jest.fn(() => ({ files: { create } })) }
-
+const configGlobal = {
+  processExitDelay: 1,
+  uploadStartDelay: 10
+}
 describe('upload', () => {
   it('returns an error if no auth argument is passed', () =>
     upload()
@@ -26,15 +29,16 @@ describe('upload', () => {
       })
   )
   it('outputs that the file started uploading', () =>
-    upload({ auth, files: ['./cam1/1.mp4'], config: {}, fs, google, log })
+    upload({ auth, files: ['./cam1/1.mp4'], config: configGlobal, fs, google, log })
       .then(() => {
         expect(log).toBeCalledWith('./cam1/1.mp4', 'started uploading')
       })
   )
   it('outputs that first files are uploading and last one is in the queue', () => {
-    const config = {
+    const config = Object.assign({
       maxConcurrent: 4
-    }
+    }, configGlobal)
+
     const files = [
       './cam1/1.mp4',
       './cam1/2.mp4',
@@ -55,9 +59,9 @@ describe('upload', () => {
       })
   })
   it('starts file uploads fine', () => {
-    const config = {
+    const config = Object.assign({
       maxConcurrent: 1
-    }
+    }, configGlobal)
     const files = [
       './cam1/6.mp4',
       './cam1/7.mp4'
@@ -75,9 +79,9 @@ describe('upload', () => {
       })
   })
   it('logs finished upload fine', done => {
-    const config = {
-      maxConcurent: 1
-    }
+    const config = Object.assign({
+      maxConcurrent: 1
+    }, configGlobal)
     const files = ['./cam1/7.mp4', './cam1/8.mp4']
     const log = jest.fn()
     upload({ auth, config, files, google, fs, log })
@@ -95,15 +99,12 @@ describe('upload', () => {
       })
   })
   it('deletes after the upload', done => {
-    let t = 50
-    const create = jest.fn(() => new Promise(resolve => {
-      setTimeout(() => resolve('good'), t === 50 ? t += 50 : 500)
-    }))
+    const create = jest.fn(() => Promise.resolve(true))
     const google = { drive: jest.fn(() => ({ files: { create } })) }
-    const config = {
-      maxConcurent: 2,
+    const config = Object.assign({
+      maxConcurrent: 2,
       deleteAfter: true
-    }
+    }, configGlobal)
     fs.unlinkSync = jest.fn()
     const files = [
       './cam1/7.mp4',
@@ -111,7 +112,7 @@ describe('upload', () => {
       './cam1/9.mp4'
     ]
     const log = jest.fn()
-    upload({ auth, config, files, google, fs, log })
+    return upload({ auth, config, files, google, fs, log })
       .then(() => {
         expect(log.mock.calls)
           .toEqual([
@@ -124,16 +125,20 @@ describe('upload', () => {
             ['./cam1/9.mp4', 'finished uploading and was deleted'],
             ['All downloads finished. Exiting in 3 seconds']
           ])
-        expect(fs.unlinkSync.mock.calls).toEqual([[files[0]], [files[1]], [files[2]]])
+        expect(fs.unlinkSync.mock.calls).toEqual([
+          [files[0]],
+          [files[1]],
+          [files[2]]
+        ])
         expect(process.exit).toBeCalled()
         done()
       })
   })
   it('Rejects fine on unlink error', done => {
-    const config = {
-      maxConcurent: 1,
+    const config = Object.assign(configGlobal, {
+      maxConcurrent: 1,
       deleteAfter: true
-    }
+    })
     fs.unlinkSync = jest.fn(() => { throw new Error('Error unlinking the file') })
     const files = ['./cam1/7.mp4', './cam1/8.mp4']
     const log = jest.fn()

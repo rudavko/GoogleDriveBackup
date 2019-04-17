@@ -11,8 +11,8 @@ const makeDrive = (google, auth) => {
   return drive
 }
 
-const addToUploadQueue = ({ max, deleteAfter, file, drive, fs, log }) => {
-  if (uploading.size < (max || 4)) {
+const addToUploadQueue = ({ config, file, drive, fs, log }) => {
+  if (uploading.size < (config.maxConcurrent || 4)) {
     if (!uploading.has(file)) {
       uploading.add(file)
       if (queue.has(file)) queue.delete(file)
@@ -31,7 +31,7 @@ const addToUploadQueue = ({ max, deleteAfter, file, drive, fs, log }) => {
           }))
         .then(() => {
           uploading.delete(file)
-          if (deleteAfter) {
+          if (config.deleteAfter) {
             fs.unlinkSync(file)
             log(file, 'finished uploading and was deleted')
           } else {
@@ -41,13 +41,13 @@ const addToUploadQueue = ({ max, deleteAfter, file, drive, fs, log }) => {
         .then(() => {
           if (queue.size > 0) {
             const nextInQueue = [...queue].shift()
-            return addToUploadQueue({ max, deleteAfter, drive, fs, log, file: nextInQueue })
+            return addToUploadQueue({ config, drive, fs, log, file: nextInQueue })
           } else if (uploading.size === 0) {
             log('All downloads finished. Exiting in 3 seconds')
-            return new Promise((resolve, reject) => setTimeout(() => {
+            return new Promise(resolve => setTimeout(() => {
               resolve(true)
               process.exit()
-            }, 3000))
+            }, config.processExitDelay || 3000))
           }
         })
     }
@@ -64,7 +64,7 @@ exports.upload = ({ auth, config, files, fs, google, log } = {}) => {
   const drive = makeDrive(google, auth)
   if (files && files.length > 0) {
     return Promise.all(files.map(file =>
-      addToUploadQueue({ file, drive, fs, log, max: config.maxConcurent, deleteAfter: config.deleteAfter })
+      addToUploadQueue({ file, drive, fs, log, config })
     ))
   }
 }
