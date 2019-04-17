@@ -119,8 +119,8 @@ describe('upload', () => {
             ['./cam1/8.mp4', 'started uploading'],
             ['./cam1/9.mp4', 'put in queue'],
             ['./cam1/7.mp4', 'finished uploading and was deleted'],
-            ['./cam1/8.mp4', 'finished uploading and was deleted'],
             ['./cam1/9.mp4', 'started uploading'],
+            ['./cam1/8.mp4', 'finished uploading and was deleted'],
             ['./cam1/9.mp4', 'finished uploading and was deleted'],
             ['All downloads finished. Exiting in 3 seconds']
           ])

@@ -17,15 +17,18 @@ const addToUploadQueue = ({ max, deleteAfter, file, drive, fs, log }) => {
       uploading.add(file)
       if (queue.has(file)) queue.delete(file)
       log(file, 'started uploading')
-      return drive.files.create(
-        {
-          requestBody: {
-            name: path.basename(file)
-          },
-          media: {
-            body: fs.createReadStream(file)
-          }
-        })
+      return new Promise(resolve =>
+        setTimeout(() => resolve(true), uploading.size * (config.uploadStartDelay || 1000))
+      )
+        .then(() => drive.files.create(
+          {
+            requestBody: {
+              name: path.basename(file)
+            },
+            media: {
+              body: fs.createReadStream(file)
+            }
+          }))
         .then(() => {
           uploading.delete(file)
           if (deleteAfter) {
