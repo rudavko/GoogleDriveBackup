@@ -96,8 +96,8 @@ describe('upload', () => {
   })
   it('deletes after the upload', done => {
     let t = 50
-    const create = jest.fn(() => new Promise((resolve, reject) => {
-      setTimeout(() => resolve('good'), t += 50)
+    const create = jest.fn(() => new Promise(resolve => {
+      setTimeout(() => resolve('good'), t === 50 ? t += 50 : 500)
     }))
     const google = { drive: jest.fn(() => ({ files: { create } })) }
     const config = {
@@ -112,7 +112,7 @@ describe('upload', () => {
     ]
     const log = jest.fn()
     upload({ auth, config, files, google, fs, log })
-      .then((x) => {
+      .then(() => {
         expect(log.mock.calls)
           .toEqual([
             ['./cam1/7.mp4', 'started uploading'],
