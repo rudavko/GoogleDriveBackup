@@ -4,13 +4,14 @@ exports.getFilesList = ({ fs, config, flatten }) => {
     return Promise.reject(new Error('The config is empty'))
   }
 
-  return Promise.all(config.folders.map(folder => {
-    if (fs.existsSync(folder)) {
-      return fs.readdirSync(folder)
-        .map(file => `${folder}/${file}`)
-    }
-    return false
-  }))
+  return Promise.all(
+    config.folders.map(folder => {
+      if (fs.existsSync(folder)) {
+        return fs.readdirSync(folder)
+          .map(file => `${folder}/${file}`)
+      }
+      return false
+    }))
     .then(filesArray => flatten(filesArray),
       reason => console.log(reason))
 }

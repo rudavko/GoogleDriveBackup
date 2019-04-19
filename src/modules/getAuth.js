@@ -8,6 +8,7 @@ exports.getAuth = ({ config, GoogleOAuth2, rl, fs } = {}) => {
     config.credentials.client_id,
     config.credentials.client_secret,
     config.credentials.redirect_uris[0])
+
   if (config.token) {
     oauth2Client.setCredentials({ refresh_token: config.token })
   } else {
@@ -21,10 +22,10 @@ exports.getAuth = ({ config, GoogleOAuth2, rl, fs } = {}) => {
         rl.readline.close()
         return oauth2Client.getToken(code)
       })
-      .then(token => {
-        const tokenText = JSON.stringify({ refresh_token: token.tokens.refresh_token })
+      .then(tokenStore => {
+        const tokenText = JSON.stringify({ refresh_token: tokenStore.tokens.refresh_token })
         fs.writeFileSync('token.json', tokenText)
-        oauth2Client.setCredentials({ refresh_token: token.tokens.refresh_token })
+        oauth2Client.setCredentials({ refresh_token: tokenStore.tokens.refresh_token })
       })
       .then(() => oauth2Client)
   }

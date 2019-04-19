@@ -12,23 +12,24 @@ const makeDrive = (google, auth) => {
 }
 
 const addToUploadQueue = ({ config, file, drive, fs, log }) => {
-  if (uploading.size < (config.maxConcurrent || 4)) {
+  if (uploading.size >= (config.maxConcurrent || 4)) {
+    if (!queue.has(file)) {
+      queue.add(file)
+      log(file, 'put in queue')
+    }
+  } else {
     if (!uploading.has(file)) {
       uploading.add(file)
       if (queue.has(file)) queue.delete(file)
       log(file, 'started uploading')
-      return new Promise(resolve =>
-        setTimeout(() => resolve(true), uploading.size * (config.uploadStartDelay || 1000))
+      const startDelay = uploading.size * (config.uploadStartDelay || 1000)
+      return new Promise(
+        resolve => setTimeout(() => resolve(true), startDelay)
       )
-        .then(() => drive.files.create(
-          {
-            requestBody: {
-              name: path.basename(file)
-            },
-            media: {
-              body: fs.createReadStream(file)
-            }
-          }))
+        .then(() => drive.files.create({
+          requestBody: { name: path.basename(file) },
+          media: { body: fs.createReadStream(file) }
+        }))
         .then(() => {
           uploading.delete(file)
           if (config.deleteAfter) {
@@ -42,19 +43,14 @@ const addToUploadQueue = ({ config, file, drive, fs, log }) => {
           if (queue.size > 0) {
             const nextInQueue = [...queue].shift()
             return addToUploadQueue({ config, drive, fs, log, file: nextInQueue })
-          } else if (uploading.size === 0) {
+          }
+          if (uploading.size === 0) {
             log('All downloads finished. Exiting in 3 seconds')
-            return new Promise(resolve => setTimeout(() => {
-              resolve(true)
-              process.exit()
-            }, config.processExitDelay || 3000))
+            return new Promise(resolve =>
+              setTimeout(() => { resolve(true); process.exit() },
+                config.processExitDelay || 3000))
           }
         })
-    }
-  } else {
-    if (!queue.has(file)) {
-      log(file, 'put in queue')
-      queue.add(file)
     }
   }
 }
