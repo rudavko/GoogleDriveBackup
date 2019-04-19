@@ -104,7 +104,7 @@ describe('general tests', () => {
     getAuth({ config, GoogleOAuth2, rl, fs })
       .then(() => {
         expect(rl.question)
-          .toBeCalledWith('Enter the code from the page here:')
+          .toBeCalledWith('Enter the code from the page:')
         expect(oauth2Client.getToken)
           .toBeCalled()
         expect(rl.readline.close).toBeCalled()

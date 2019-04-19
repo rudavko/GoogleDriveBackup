@@ -16,7 +16,7 @@ exports.getAuth = ({ config, GoogleOAuth2, rl, fs } = {}) => {
       scope: config.scope
     })
     console.log('Go here to authenticate', authUrl)
-    return rl.question('Enter the code from the page here:')
+    return rl.question('Enter the code from the page:')
       .then(code => {
         rl.readline.close()
         return oauth2Client.getToken(code)
