@@ -28,6 +28,6 @@
   },
   "dependencies": {
     "array-flatten": "^2.1.2",
-    "googleapis": "^39.2.0"
+    "googleapis": "^47.0.0"
   }
 }
