@@ -23,9 +23,10 @@ exports.getAuth = ({ config, GoogleOAuth2, rl, fs } = {}) => {
         return oauth2Client.getToken(code)
       })
       .then(tokenStore => {
-        const tokenText = JSON.stringify({ refresh_token: tokenStore.tokens.refresh_token })
+        const token = { refresh_token: tokenStore.tokens.refresh_token }
+        const tokenText = JSON.stringify(token)
         fs.writeFileSync('token.json', tokenText)
-        oauth2Client.setCredentials({ refresh_token: tokenStore.tokens.refresh_token })
+        oauth2Client.setCredentials(token)
       })
       .then(() => oauth2Client)
   }
